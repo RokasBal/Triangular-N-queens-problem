@@ -1,57 +1,67 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include "string.h"
 
 using namespace std;
 
-void printBoard(int boardSize);
-void printAnswer(vector<vector<int>>& board, int boardSize);
+#define dataFile "data.txt"
+
+void printBoard(int boardSize, ofstream& output);
+void printAnswer(vector<vector<int>>& board, int boardSize, ofstream& output);
 void fillBoard(vector<vector<int>>& board, int boardSize);
-bool solveProblem(vector<vector<int>>& board, int col, int boardSize);
+bool solveProblemUtil(vector<vector<int>>& board, int row, int boardSize, ofstream& output);
+void solveProblem(int queenCount, int boardSize);
 bool isSafe(vector<vector<int>>& board, int row, int col, int boardSize);
 void printVector(vector<vector<int>>& board, int boardSize);
+void printScript(ofstream& output);
+void printInfo(ofstream& output);
 
 int calls = 0;
 int queensRemaining = 0;
+int queenCount = 0;
+int boardSize = 0;
+int backtrackDepth = 0;
 
 int main() {
     system("clear");
-    
-    int queens, boardSize;
 
     cout << "Įrašykite karalienių skaičiu: ";
-    cin >> queens;
-    queensRemaining = queens;
+    cin >> queenCount;
+    queensRemaining = queenCount;
     cout << "Įrašykite lentos dydį: ";
     cin >> boardSize;
 
-    vector<vector<int>> board(boardSize, vector<int>(boardSize * 2 - 1));
-
-    // Trikampes lentos spausdinimas
-    printBoard(boardSize);
-
-    // Lentos masyvo užpildymas
-    fillBoard(board, boardSize);
-
-    // Vektoriaus testavimas
-    // for(int i = 0; i < boardSize; i++) {
-    //     for(int j = 0; j < boardSize * 2 - 1; j++) {
-    //         cout << board[i][j];
-    //     }
-    //     cout << endl;
-    // }
-
-    if(solveProblem(board, 0, boardSize)) {
-        cout << "Sprendimas rastas!" << endl;
-        printVector(board, boardSize);
-        printAnswer(board, boardSize);
-    } else {
-        cout << "Sprendinio nerasta!" << endl;
-    }
+    solveProblem(queenCount, boardSize);
 
     cout <<"Calls: " <<calls <<endl;
 
     return 0;
 
+}
+
+void solveProblem(int queenCount, int boardSize) {
+    vector<vector<int>> board(boardSize, vector<int>(boardSize * 2 - 1));
+    fillBoard(board, boardSize);
+
+    ofstream output("output.txt");
+    if (!output.is_open()) {
+        cerr << "Klaida atidarant faila!" <<endl;
+        exit(1);
+    }
+
+    printScript(output);
+    printInfo(output);
+
+    if(solveProblemUtil(board, 0, boardSize, output)) {
+        output <<endl <<"Trečia dalis - Rezultatai: " <<endl <<endl;
+        output <<"Sprendimas rastas! Atlikta " <<calls <<" bandymų." <<endl <<endl;
+        output <<"Sprendimas pavaizduotas lentoje: " <<endl;
+        printAnswer(board, boardSize, output);
+    } else {
+        output <<endl <<"Trečia dalis - Rezultatai: " <<endl <<endl;
+        output << "Sprendinio nerasta! Atlikta " <<calls <<" bandymų." << endl;
+    }
 }
 
 void fillBoard(vector<vector<int>>& board, int boardSize) {
@@ -72,36 +82,47 @@ void fillBoard(vector<vector<int>>& board, int boardSize) {
     }
 }   
 
-bool solveProblem(vector<vector<int>>& board, int row, int boardSize) {
-    calls++;
-
+bool solveProblemUtil(vector<vector<int>>& board, int row, int boardSize, ofstream& output) {
+    // Jei eilutės skaičius viršija lentos dydį, sprendinio nėra
     if (row >= boardSize)
-        return true;
+        return false;
 
-    // Iterate through all columns in the current row
-    for (int i = 0; i < boardSize * 2 - 1; i++) {
-        if (board[row][i] == 1 && isSafe(board, row, i, boardSize)) {
-            board[row][i] = 2; // Place queen
+    // Praeinama pro visas vietas eilutėje
+    for (int col = 0; col < boardSize * 2 - 1; col++) {
+        if(board[row][col] == 1 || board[row][col] == 2) {
+            calls++;
+            for(int i = 0; i < backtrackDepth; i++) output <<"-";
+            output <<"Bandome valdove " <<queenCount - queensRemaining + 1 <<". ";
+        }
+
+        if (board[row][col] == 1 && isSafe(board, row, col, boardSize)) {
+            // Padėti karalienę
+            board[row][col] = 2;
             queensRemaining--;
-            if (queensRemaining == 0) {
+            backtrackDepth++;
+
+            output <<"Pastatyta langelyje " <<row + 1 <<", " <<col + 1 <<", likes valdovių skaičius: " <<queensRemaining <<endl;
+
+            if(queensRemaining == 0) {
                 return true;
             }
 
-            printVector(board, boardSize);
-
-            // Recur to the next row or any row below
-            for (int nextRow = row + 1; nextRow < boardSize; nextRow++) {
-                if (solveProblem(board, nextRow, boardSize))
-                    return true;
+            // Bandoma rasti, ar galima padėti likusias karalienes
+            if (solveProblemUtil(board, row + 1, boardSize, output)) {
+                return true;
             }
 
-            board[row][i] = 1; // Backtrack
+            // Jei nepavyko rasti vietos kitoms karalienėms, vykdome BACKTRACK
+            board[row][col] = 1; // Sugražiname lentos vertę į 1 (tuščias kvadratėlis lentoje)
             queensRemaining++;
+            backtrackDepth--;
+        } else if(board[row][col] == 1 && !isSafe(board, row, col, boardSize)) {
+            output <<"Kertama langelyje " <<row + 1 <<", " <<col / 2 + 1 <<", likes valdovių skaičius: " <<queensRemaining <<endl;
         }
-        printVector(board, boardSize);
     }
 
-    return false;
+    // Jei sprendinys nerastas, bandyti pradedant kitoje eilutėje
+    return solveProblemUtil(board, row + 1, boardSize, output);
 }
 
 bool isSafe(vector<vector<int>>& board, int row, int col, int boardSize) {
@@ -126,22 +147,29 @@ bool isSafe(vector<vector<int>>& board, int row, int col, int boardSize) {
     return true;
 }
 
-void printBoard(int boardSize) {
+void printBoard(int boardSize, ofstream& output) {
+    output <<" Y \\/ ";
+    for(int i = 0; i < boardSize * 2 - 1; ++i) {
+        output <<"-";
+    }
+    output <<"> X" <<endl;
     for(int i = 0; i < boardSize; ++i) {
+        if(boardSize > 10) output <<i + 1 <<" | ";
+        else output <<" " <<i + 1 <<" | ";;
         for (int j = 0; j < boardSize - i - 1; ++j) {
-            cout << " ";
+            output << " ";
         }
 
         int counter = 1;
         for (int k = 0; k < 2 * i + 1; ++k) {
             if(k % 2 == 0) {
-                cout <<counter;
+                output <<counter;
                 counter++;
             } else {
-                cout <<" ";
+                output <<" ";
             }
         }
-        cout <<endl;
+        output <<endl;
     }
 }
 
@@ -155,17 +183,28 @@ void printVector(vector<vector<int>>& board, int boardSize) {
     cout <<endl;
 }
 
-void printAnswer(vector<vector<int>>& board, int boardSize) {
+void printAnswer(vector<vector<int>>& board, int boardSize, ofstream& output) {
     for(int i = 0; i < boardSize; ++i) {
         for(int j = 0; j < boardSize * 2 - 1; ++j) {
             if(board[i][j] == 0) {
-                cout << " ";
+                output << " ";
             } else if(board[i][j] == 1) {
-                cout << "*";
+                output << "~";
             } else {
-                cout << "Q";
+                output << "Q";
             }
         }
-        cout <<endl;
+        output <<endl;
     }
+}
+
+void printInfo(ofstream& output) {
+    output <<"Pradiniai duomenys: " <<endl;
+    output <<"Testų rinkinys: " <<dataFile <<endl;
+    output <<"Valdovių skaičius N =  " <<queenCount <<"." <<endl;
+    output <<"Lentos dydis M = " <<boardSize <<"." <<endl <<endl;
+    output <<"Lentos išsidėstymas: " <<endl;
+    printBoard(boardSize, output);
+    output <<endl;
+    output <<"Antra dalis - Protokolas: " <<endl;
 }
