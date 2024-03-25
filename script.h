@@ -5,9 +5,10 @@
 #include <vector>
 #include <iostream>
 
-#define dataFile "data.txt"
+#define dataFile "2uzd-14var-duom1-N_3-M_3-Baliutavicius-20230327.txt"
+#define outputFile "output.txt"
 
-#define errorOpeningFile "Klaida atidarant failą."
+#define errorOpeningFile "Klaida atidarant failą. Programa užsidaro."
 
 void printScript(std::ofstream& output);
 void printInfoStart(std::ofstream& output, int queenCount, int boardSize);

@@ -5,6 +5,7 @@
 
 void printScript(std::ofstream& output) {
     output <<"PIRMA DALIS" <<std::endl;
+    output <<"2 Užduotis, 14 variantas. Rokas Baliutavičius, 1 PS kursas, 5 grupė, 1 pogrupis." <<std::endl <<std::endl;
 
     output <<"Užduoties sąlyga: Rasti N valdovių išdėstymą M trikampėje lentoje, kad jos viena kitos nekirstų. (Triangular N-queens problem)" <<std::endl <<std::endl;
 

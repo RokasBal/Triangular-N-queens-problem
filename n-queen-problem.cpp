@@ -1,21 +1,21 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include "script.h"
 
 using namespace std;
-
-#define outputFile "output.txt"
 
 void printBoard(int boardSize, ofstream& output);
 void printAnswer(vector<vector<int>>& board, int boardSize, ofstream& output);
 void fillBoard(vector<vector<int>>& board, int boardSize);
 bool solveProblemUtil(vector<vector<int>>& board, int row, int boardSize, ofstream& output, vector<vector<int>>& coords);
-void solveProblem(int queenCount, int boardSize);
+void solveProblem();
 bool isSafe(vector<vector<int>>& board, int row, int col, int boardSize);
 void printVector(vector<vector<int>>& board, int boardSize, ofstream& output);
 void printScript(ofstream& output);
 void printInfo(ofstream& output);
+void getData();
 
 int calls = 0;
 int queensRemaining = 0;
@@ -25,28 +25,26 @@ int backtrackDepth = 0;
 int rowTracker = 1;
 
 int main() {
-    system("clear");
+    solveProblem();
 
-    cout << "Įrašykite karalienių skaičiu: ";
-    cin >> queenCount;
-    queensRemaining = queenCount;
-    cout << "Įrašykite lentos dydį: ";
-    cin >> boardSize;
-
-    solveProblem(queenCount, boardSize);
-
-    cout <<"Calls: " <<calls <<endl;
+    cout <<"Sprendimas baigtas. Bandymų kiekis: " <<calls <<endl;
 
     return 0;
 
 }
 
-void solveProblem(int queenCount, int boardSize) {    
+void solveProblem() {    
+    system("clear");
+
+    getData();
+    queensRemaining = queenCount;
+    
     vector<vector<int>> board(boardSize, vector<int>(boardSize * 2 - 1));
     vector<vector<int>> coords(boardSize, vector<int>(boardSize * 2 - 1));
+
     fillBoard(board, boardSize);
     fillCoords(coords, boardSize);
-
+    
     ofstream output(outputFile);
     if (!output.is_open()) {
         cerr <<errorOpeningFile <<endl;
@@ -64,6 +62,8 @@ void solveProblem(int queenCount, int boardSize) {
         printResultMessage(output);
         printSolutionNotFound(output, calls);
     }
+
+    output.close();
 }
 
 void fillBoard(vector<vector<int>>& board, int boardSize) {
@@ -219,7 +219,17 @@ void printAnswer(vector<vector<int>>& board, int boardSize, ofstream& output) {
     // ~ vaizduoja tuščią vietą priklausančią sachmatų lentai
     // Q atvaizduoja tinkamą valdovės vietą sachmatų lentoje
     
+    output <<" Y\\/ ";
+    for(int i = 1; i <= boardSize; ++i) {
+        output <<i <<" ";
+    }
+    
+    output <<"-> X" <<endl;
+
     for(int i = 0; i < boardSize; ++i) {
+        if(i >= 9) output <<i + 1 <<" | ";
+        else output <<" " <<i + 1 <<" | ";;
+        
         for(int j = 0; j < boardSize * 2 - 1; ++j) {
             if(board[i][j] == 0) {
                 output << " ";
@@ -239,5 +249,37 @@ void printInfo(ofstream& output) {
     printBoard(boardSize, output);
     output <<endl;
     printProtocolStart(output);
+}
+
+void getData() {
+    ifstream input(dataFile);
+    
+    if(!input.is_open()) {
+        cerr <<errorOpeningFile <<endl;
+        exit(1);
+    }
+
+    string line;
+    while (getline(input, line)) {
+        istringstream iss(line);
+        string word;
+        int number;
+
+        iss >> word;
+        iss >> word;
+        iss >> word;
+        char equalSign;
+        iss >> equalSign;
+
+        iss >> number;
+
+        if (word == "N") {
+            queenCount = number;
+        } else if (word == "M") {
+            boardSize = number;
+        }
+    }
+
+    input.close();
 }
 
