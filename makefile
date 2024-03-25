@@ -6,3 +6,6 @@ n-queen-problem.o: n-queen-problem.cpp
 
 script.o: script.cpp
 	g++ -c script.cpp
+
+cleanLin:
+	rm -rf *.o
