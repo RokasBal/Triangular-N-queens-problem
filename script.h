@@ -26,6 +26,7 @@ void printNewLine(std::ofstream& output);
 void printResultMessageNoSolution(std::ofstream& output);
 void printTooManyQueens(std::ofstream& output);
 void printBoardTooBig(std::ofstream& output);
+void printDoneMessage(int calls);
 void fillCoords(std::vector<std::vector<int>>& board, int boardSize);
 
 #endif 

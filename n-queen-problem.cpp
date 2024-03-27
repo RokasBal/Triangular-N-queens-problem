@@ -29,9 +29,6 @@ int rowTracker = 1;
 
 int main() {
     solveProblem();
-
-    cout <<"Sprendimas baigtas. Bandymų kiekis: " <<calls <<endl;
-
     return 0;
 
 }
@@ -83,6 +80,8 @@ void solveProblem() {
         printResultMessage(output);
         printSolutionNotFound(output, calls);
     }
+
+    printDoneMessage(calls);
 
     output.close();
 }

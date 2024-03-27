@@ -4,7 +4,7 @@
 #include "script.h"
 
 void printScript(std::ofstream& output) {
-    output <<"2 Užduotis, 14 variantas" <<std::endl <<std::endl;
+    output <<"2 Užduotis, 14 variantas." <<std::endl <<std::endl;
 
     output <<"Užduoties sąlyga:" <<std::endl <<"Rasti pirmąjį N valdovių išdėstymą M trikampėje lentoje, kad jos viena kitos nekirstų. (Triangular N-queens problem)" <<std::endl <<std::endl;
 
@@ -84,6 +84,11 @@ void printBoardTooBig(std::ofstream& output) {
 
 void printNewLine(std::ofstream& output) {
     output <<std::endl;
+}
+
+void printDoneMessage(int calls) {
+    std::cout <<"Sprendimas baigtas. Bandymų kiekis: " <<calls <<std::endl;
+
 }
 
 void fillCoords(std::vector<std::vector<int>>& board, int boardSize) {
