@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-#define dataFile "2uzd-14var-duom1-N_3-M_3-Baliutavicius-20230327.txt"
+#define dataFile "data.txt"
 #define outputFile "output.txt"
 
 #define errorOpeningFile "Klaida atidarant failą. Programa užsidaro."
@@ -19,8 +19,13 @@ void printPlacementFailure(std::ofstream& output, int row, int col, int remainin
 void printResultMessage(std::ofstream& output);
 void printSolutionFound(std::ofstream& output, int calls);
 void printSolutionNotFound(std::ofstream& output, int calls);
+void printSolutionNotPossible(std::ofstream& output);
 void printNotEnoughRows(std::ofstream& output);
 void printBacktracking(std::ofstream& output);
+void printNewLine(std::ofstream& output);
+void printResultMessageNoSolution(std::ofstream& output);
+void printTooManyQueens(std::ofstream& output);
+void printBoardTooBig(std::ofstream& output);
 void fillCoords(std::vector<std::vector<int>>& board, int boardSize);
 
 #endif 

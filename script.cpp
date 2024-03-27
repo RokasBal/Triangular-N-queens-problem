@@ -4,10 +4,13 @@
 #include "script.h"
 
 void printScript(std::ofstream& output) {
-    output <<"PIRMA DALIS" <<std::endl;
-    output <<"2 Užduotis, 14 variantas. Rokas Baliutavičius, 1 PS kursas, 5 grupė, 1 pogrupis." <<std::endl <<std::endl;
+    output <<"2 Užduotis, 14 variantas" <<std::endl <<std::endl;
 
-    output <<"Užduoties sąlyga: Rasti N valdovių išdėstymą M trikampėje lentoje, kad jos viena kitos nekirstų. (Triangular N-queens problem)" <<std::endl <<std::endl;
+    output <<"Užduoties sąlyga:" <<std::endl <<"Rasti pirmąjį N valdovių išdėstymą M trikampėje lentoje, kad jos viena kitos nekirstų. (Triangular N-queens problem)" <<std::endl <<std::endl;
+
+    output <<"Programos apribojimai:" <<std::endl;
+    output <<"Maksimalus valdovių skaičius N = 15." <<std::endl;
+    output <<"Maksimalus lentos dydis M = 15." <<std::endl <<std::endl;
 
     output <<"Sprendimo eiga: " <<std::endl;
     output <<"Sprendinio ieškojimas pradedamas nuo viršaus į apačią, valdoves statant pradedant nuo kairės į dešinę." <<std::endl;
@@ -19,48 +22,68 @@ void printScript(std::ofstream& output) {
 }
 
 void printInfoStart(std::ofstream& output, int queenCount, int boardSize) {
-    output <<"Pradiniai duomenys: " <<std::endl;
+    output <<"I DALIS. DUOMENYS." <<std::endl <<std::endl;
     output <<"Testų rinkinys: " <<dataFile <<std::endl;
-    output <<"Valdovių skaičius N =  " <<queenCount <<"." <<std::endl;
+    output <<"Valdovių skaičius N = " <<queenCount <<"." <<std::endl;
     output <<"Lentos dydis M = " <<boardSize <<"." <<std::endl <<std::endl;
-    output <<"Lentos išsidėstymas: " <<std::endl;
+    output <<"Lentos išdėstymas: " <<std::endl;
 }
 
 void printProtocolStart(std::ofstream& output) {
-    output <<"Antra dalis - Protokolas: " <<std::endl;
+    output <<"II DALIS. VYKDYMAS. " <<std::endl;
 }
 
 void printAttemptMessage(std::ofstream& output, int queenNumber) {
-    output <<"Bandome valdove " <<queenNumber <<". ";
+    output <<"Valdove " <<queenNumber <<". ";
 }
 
 void printPlacementSuccess(std::ofstream& output, int row, int col, int remainingQueens, int boardSize, std::vector<std::vector<int>>& coords) {
-    output <<"Pastatyta langelyje " <<row + 1 <<", " <<coords[row][col] <<", likes valdovių skaičius: " <<remainingQueens <<std::endl;
+    output <<"Pastatyta eilutėje " <<row + 1 <<", langelyje " <<coords[row][col] <<". Likes valdovių skaičius: " <<remainingQueens <<". ";
 }
 
 void printPlacementFailure(std::ofstream& output, int row, int col, int remainingQueens, int boardSize, std::vector<std::vector<int>>& coords) {
-    output <<"Kertama langelyje " <<row + 1 <<", " <<coords[row][col] <<", likes valdovių skaičius: " <<remainingQueens <<std::endl;
+    output <<"Kertama eilutėje " <<row + 1 <<", langelyje " <<coords[row][col] <<". Likes valdovių skaičius: " <<remainingQueens <<". ";
 }
 
 void printResultMessage(std::ofstream& output) {
-    output <<std::endl <<"Trečia dalis - Rezultatai: " <<std::endl <<std::endl;
+    output <<std::endl <<std::endl <<"III DALIS. REZULTATAI. " <<std::endl <<std::endl;
+}
+
+void printResultMessageNoSolution(std::ofstream& output) {
+    output <<std::endl <<"II DALIS. REZULTATAI. " <<std::endl <<std::endl;
 }
 
 void printSolutionFound(std::ofstream& output, int calls) {
-    output <<"Sprendimas rastas! Atlikta " <<calls <<" bandymų." <<std::endl <<std::endl;
-    output <<"Sprendimas pavaizduotas lentoje: " <<std::endl;
+    output <<"Sprendinys rastas! Bandymų skaičius: " <<calls <<"." <<std::endl <<std::endl;
+    output <<"Sprendinys: " <<std::endl <<std::endl;
 }
 
 void printSolutionNotFound(std::ofstream& output, int calls) {
-    output <<"Sprendinio nerasta! Atlikta " <<calls <<" bandymų." <<std::endl;
+    output <<"Sprendinio nerasta! Bandymų skaičius: " <<calls <<"." <<std::endl;
 }
 
 void printNotEnoughRows(std::ofstream& output) {
-    output <<"Gryžtama, kadangi karalienių skaičius viršija netikrintų eilučių skaičių." <<std::endl;
+    output <<"Grįžtama, kadangi karalienių skaičius viršija netikrintų eilučių skaičių. ";
 }
 
+void printSolutionNotPossible(std::ofstream& output) {
+     output <<"Sprendinio rasti neįmanoma. Valdovių skaičius viršija maksimalų galimą valdovių skaičių pateiktam lentos dydžiui. ";
+}   
+
 void printBacktracking(std::ofstream& output) {
-    output <<"Gryžtama, kadangi tokiu išdėliojimu sprendimas nerastas." <<std::endl;
+    output <<"Grįžtama, kadangi tokiu išdėliojimu sprendinys nerastas. ";
+}
+
+void printTooManyQueens(std::ofstream& output) {
+    output <<"Valdovių skaičius viršija maksimalų galimą valdovių skaičių (15)";
+}
+
+void printBoardTooBig(std::ofstream& output) {
+    output <<"Lentos dydis viršija maksimalų galimą lentos dydį (15)";
+}
+
+void printNewLine(std::ofstream& output) {
+    output <<std::endl;
 }
 
 void fillCoords(std::vector<std::vector<int>>& board, int boardSize) {
