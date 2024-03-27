@@ -4,7 +4,7 @@ build: n-queen-problem.o script.o
 run:
 	make clean
 	make build
-	./n-queen-problem
+	.\n-queen-problem.exe
 
 debug: script.o
 	g++ -g n-queen-problem.cpp script.o
